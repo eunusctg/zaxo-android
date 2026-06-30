@@ -1,5 +1,4 @@
 import * as functions from "firebase-functions";
-import { defineSecret } from "firebase-functions/params";
 import * as admin from "firebase-admin";
 
 // Initialize Firebase Admin SDK
@@ -9,13 +8,14 @@ const db = admin.firestore();
 const messaging = admin.messaging();
 
 // ═══════════════════════════════════════════════════════════════
-// LiveKit credentials — stored in Firebase Secret Manager.
-// Set them via: firebase functions:secrets:set LIVEKIT_API_KEY
-//               firebase functions:secrets:set LIVEKIT_API_SECRET
-// These are automatically loaded at runtime and NEVER in source.
+// LiveKit credentials — loaded from environment variables.
+// Stored in functions/.env (not committed to source control).
+// For production, migrate to Firebase Secret Manager:
+//   1. Enable Secret Manager API in GCP Console
+//   2. firebase functions:secrets:set LIVEKIT_API_KEY
+//   3. firebase functions:secrets:set LIVEKIT_API_SECRET
+//   4. Update code to use defineSecret() from firebase-functions/params
 // ═══════════════════════════════════════════════════════════════
-const livekitApiKey = defineSecret("LIVEKIT_API_KEY");
-const livekitApiSecret = defineSecret("LIVEKIT_API_SECRET");
 
 // ═══════════════════════════════════════════════════════════════
 // D.1 SEND CALL PUSH
@@ -246,9 +246,7 @@ export const sendGroupCallPush = functions.https.onCall(async (data, context) =>
 // Tokens are scoped to a specific room and identity.
 // ═══════════════════════════════════════════════════════════════
 
-export const generateRoomToken = functions.https.onCall(
-  { secrets: [livekitApiKey, livekitApiSecret] },
-  async (data, context) => {
+export const generateRoomToken = functions.https.onCall(async (data, context) => {
   const { roomId, participantIdentity, isAdmin } = data;
   const uid = context.auth?.uid;
 
@@ -263,8 +261,8 @@ export const generateRoomToken = functions.https.onCall(
   // Generate LiveKit room token using livekit-server-sdk
   const { AccessToken } = require("livekit-server-sdk");
 
-  const apiKey = livekitApiKey.value();
-  const apiSecret = livekitApiSecret.value();
+  const apiKey = process.env.LIVEKIT_API_KEY || "";
+  const apiSecret = process.env.LIVEKIT_API_SECRET || "";
 
   if (!apiKey || !apiSecret) {
     throw new functions.https.HttpsError("internal", "LiveKit credentials not configured");
@@ -289,8 +287,7 @@ export const generateRoomToken = functions.https.onCall(
   token.ttl = 14400; // seconds
 
   return { token: token.toJwt() };
-  }
-);
+});
 
 // ═══════════════════════════════════════════════════════════════
 // Updates call status in Firestore (accepted, declined, busy, ended).

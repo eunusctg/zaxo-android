@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Splash screen background — matches neumorphic light theme -->
+    <color name="splash_background">#E0E5EC</color>
+
+    <!-- Brand colors -->
+    <color name="zaxo_primary">#4A90D9</color>
+    <color name="zaxo_primary_dark">#2E6AB0</color>
+    <color name="zaxo_accent">#27AE60</color>
+    <color name="zaxo_error">#E74C3C</color>
+</resources>

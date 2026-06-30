@@ -1,0 +1,54 @@
+# Built application files
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Java/Kotlin compiled files
+*.class
+*.kt.swift
+
+# Generated files
+bin/
+gen/
+out/
+build/
+
+# Gradle files
+.gradle/
+local.properties
+*.iml
+.idea/
+
+# Android Studio / IntelliJ
+.navigation/
+captures/
+
+# Keystore files (NEVER commit these)
+*.jks
+*.keystore
+
+# Environment & secrets (NEVER commit these)
+.env
+.env.local
+.env.production
+google-services.json
+GoogleService-Info.plist
+secrets.properties
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Node modules (Cloud Functions)
+functions/node_modules/
+functions/lib/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
